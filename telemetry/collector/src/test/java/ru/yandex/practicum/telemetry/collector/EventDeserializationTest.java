@@ -38,6 +38,26 @@ class EventDeserializationTest {
         assertHub("SCENARIO_REMOVED", "\"name\":\"night\"", ScenarioRemovedEvent.class);
     }
 
+    @Test
+    void usesCurrentTimeWhenSensorTimestampIsMissing() throws Exception {
+        Instant before = Instant.now();
+        SensorEvent event = mapper.readValue("""
+                {"id":"switch-1","hubId":"hub-1","state":true,"type":"SWITCH_SENSOR_EVENT"}
+                """, SensorEvent.class);
+
+        assertThat(event.getTimestamp()).isBetween(before, Instant.now());
+    }
+
+    @Test
+    void usesCurrentTimeWhenHubTimestampIsMissing() throws Exception {
+        Instant before = Instant.now();
+        HubEvent event = mapper.readValue("""
+                {"hubId":"hub-1","id":"switch-1","type":"DEVICE_REMOVED"}
+                """, HubEvent.class);
+
+        assertThat(event.getTimestamp()).isBetween(before, Instant.now());
+    }
+
     private void assertSensor(String type, String fields, Class<?> expectedType) throws Exception {
         String json = "{\"id\":\"sensor-1\",\"hubId\":\"hub-1\",\"timestamp\":\"2024-08-06T15:11:24.157Z\","
                 + fields + ",\"type\":\"" + type + "\"}";

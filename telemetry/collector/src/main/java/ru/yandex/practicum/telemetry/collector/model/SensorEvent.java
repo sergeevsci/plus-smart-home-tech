@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        property = "type", visible = true)
+        property = "type", defaultImpl = SensorEventType.class)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = LightSensorEvent.class, name = "LIGHT_SENSOR_EVENT"),
         @JsonSubTypes.Type(value = TemperatureSensorEvent.class, name = "TEMPERATURE_SENSOR_EVENT"),
@@ -21,10 +21,7 @@ public abstract class SensorEvent {
     private String id;
     @NotBlank
     private String hubId;
-    @NotNull
-    private Instant timestamp;
-    @NotNull
-    private SensorEventType type;
+    private Instant timestamp = Instant.now();
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -32,6 +29,6 @@ public abstract class SensorEvent {
     public void setHubId(String hubId) { this.hubId = hubId; }
     public Instant getTimestamp() { return timestamp; }
     public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
-    public SensorEventType getType() { return type; }
-    public void setType(SensorEventType type) { this.type = type; }
+    @NotNull
+    public abstract SensorEventType getType();
 }

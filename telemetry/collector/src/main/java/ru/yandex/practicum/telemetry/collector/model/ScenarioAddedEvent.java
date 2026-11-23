@@ -14,6 +14,9 @@ public final class ScenarioAddedEvent extends HubEvent {
     @NotNull
     private List<@Valid DeviceAction> actions;
 
+    @Override
+    public HubEventType getType() { return HubEventType.SCENARIO_ADDED; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public List<ScenarioCondition> getConditions() { return conditions; }

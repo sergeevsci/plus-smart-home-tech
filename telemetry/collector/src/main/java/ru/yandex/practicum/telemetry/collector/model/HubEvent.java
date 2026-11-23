@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY,
-        property = "type", visible = true)
+        property = "type", defaultImpl = HubEventType.class)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DeviceAddedEvent.class, name = "DEVICE_ADDED"),
         @JsonSubTypes.Type(value = DeviceRemovedEvent.class, name = "DEVICE_REMOVED"),
@@ -18,15 +18,12 @@ import java.time.Instant;
 public abstract class HubEvent {
     @NotBlank
     private String hubId;
-    @NotNull
-    private Instant timestamp;
-    @NotNull
-    private HubEventType type;
+    private Instant timestamp = Instant.now();
 
     public String getHubId() { return hubId; }
     public void setHubId(String hubId) { this.hubId = hubId; }
     public Instant getTimestamp() { return timestamp; }
     public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
-    public HubEventType getType() { return type; }
-    public void setType(HubEventType type) { this.type = type; }
+    @NotNull
+    public abstract HubEventType getType();
 }

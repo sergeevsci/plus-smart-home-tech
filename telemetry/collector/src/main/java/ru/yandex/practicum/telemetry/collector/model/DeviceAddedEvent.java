@@ -9,6 +9,9 @@ public final class DeviceAddedEvent extends HubEvent {
     @NotNull
     private DeviceType deviceType;
 
+    @Override
+    public HubEventType getType() { return HubEventType.DEVICE_ADDED; }
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public DeviceType getDeviceType() { return deviceType; }

@@ -5,6 +5,9 @@ public final class ClimateSensorEvent extends SensorEvent {
     private int humidity;
     private int co2Level;
 
+    @Override
+    public SensorEventType getType() { return SensorEventType.CLIMATE_SENSOR_EVENT; }
+
     public int getTemperatureC() { return temperatureC; }
     public void setTemperatureC(int temperatureC) { this.temperatureC = temperatureC; }
     public int getHumidity() { return humidity; }

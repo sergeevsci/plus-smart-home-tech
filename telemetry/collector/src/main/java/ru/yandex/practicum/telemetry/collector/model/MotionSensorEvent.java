@@ -5,6 +5,9 @@ public final class MotionSensorEvent extends SensorEvent {
     private boolean motion;
     private int voltage;
 
+    @Override
+    public SensorEventType getType() { return SensorEventType.MOTION_SENSOR_EVENT; }
+
     public int getLinkQuality() { return linkQuality; }
     public void setLinkQuality(int linkQuality) { this.linkQuality = linkQuality; }
     public boolean isMotion() { return motion; }

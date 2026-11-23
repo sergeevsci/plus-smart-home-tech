@@ -4,6 +4,9 @@ public final class TemperatureSensorEvent extends SensorEvent {
     private int temperatureC;
     private int temperatureF;
 
+    @Override
+    public SensorEventType getType() { return SensorEventType.TEMPERATURE_SENSOR_EVENT; }
+
     public int getTemperatureC() { return temperatureC; }
     public void setTemperatureC(int temperatureC) { this.temperatureC = temperatureC; }
     public int getTemperatureF() { return temperatureF; }
