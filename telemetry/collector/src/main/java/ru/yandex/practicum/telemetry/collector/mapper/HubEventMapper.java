@@ -49,15 +49,11 @@ public class HubEventMapper {
     }
 
     private ScenarioConditionAvro mapCondition(ScenarioCondition condition) {
-        Object value = condition.getValue();
-        if (value != null && !(value instanceof Integer) && !(value instanceof Boolean)) {
-            throw new IllegalArgumentException("Scenario condition value must be an integer, boolean or null");
-        }
         return new ScenarioConditionAvro(
                 condition.getSensorId(),
                 ConditionTypeAvro.valueOf(condition.getType().name()),
                 ConditionOperationAvro.valueOf(condition.getOperation().name()),
-                value
+                condition.getValue()
         );
     }
 

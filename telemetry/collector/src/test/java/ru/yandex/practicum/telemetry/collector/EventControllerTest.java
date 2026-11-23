@@ -39,4 +39,21 @@ class EventControllerTest {
                 """))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void rejectsMissingRequiredSensorReading() throws Exception {
+        mockMvc.perform(post("/events/sensors").contentType(MediaType.APPLICATION_JSON).content("""
+                {"id":"motion-1","hubId":"hub-1","motion":true,"voltage":220,
+                 "type":"MOTION_SENSOR_EVENT"}
+                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void rejectsShortScenarioNameAndEmptyCollections() throws Exception {
+        mockMvc.perform(post("/events/hubs").contentType(MediaType.APPLICATION_JSON).content("""
+                {"hubId":"hub-1","name":"ab","conditions":[],"actions":[],"type":"SCENARIO_ADDED"}
+                """))
+                .andExpect(status().isBadRequest());
+    }
 }

@@ -1,17 +1,22 @@
 package ru.yandex.practicum.telemetry.collector.model;
 
+import jakarta.validation.constraints.NotNull;
+
 public final class MotionSensorEvent extends SensorEvent {
-    private int linkQuality;
-    private boolean motion;
-    private int voltage;
+    @NotNull
+    private Integer linkQuality;
+    @NotNull
+    private Boolean motion;
+    @NotNull
+    private Integer voltage;
 
     @Override
     public SensorEventType getType() { return SensorEventType.MOTION_SENSOR_EVENT; }
 
-    public int getLinkQuality() { return linkQuality; }
-    public void setLinkQuality(int linkQuality) { this.linkQuality = linkQuality; }
-    public boolean isMotion() { return motion; }
-    public void setMotion(boolean motion) { this.motion = motion; }
-    public int getVoltage() { return voltage; }
-    public void setVoltage(int voltage) { this.voltage = voltage; }
+    public Integer getLinkQuality() { return linkQuality; }
+    public void setLinkQuality(Integer linkQuality) { this.linkQuality = linkQuality; }
+    public Boolean getMotion() { return motion; }
+    public void setMotion(Boolean motion) { this.motion = motion; }
+    public Integer getVoltage() { return voltage; }
+    public void setVoltage(Integer voltage) { this.voltage = voltage; }
 }

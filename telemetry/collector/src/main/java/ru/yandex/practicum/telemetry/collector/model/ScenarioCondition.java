@@ -10,7 +10,7 @@ public final class ScenarioCondition {
     private ConditionType type;
     @NotNull
     private ConditionOperation operation;
-    private Object value;
+    private Integer value;
 
     public String getSensorId() { return sensorId; }
     public void setSensorId(String sensorId) { this.sensorId = sensorId; }
@@ -18,6 +18,6 @@ public final class ScenarioCondition {
     public void setType(ConditionType type) { this.type = type; }
     public ConditionOperation getOperation() { return operation; }
     public void setOperation(ConditionOperation operation) { this.operation = operation; }
-    public Object getValue() { return value; }
-    public void setValue(Object value) { this.value = value; }
+    public Integer getValue() { return value; }
+    public void setValue(Integer value) { this.value = value; }
 }

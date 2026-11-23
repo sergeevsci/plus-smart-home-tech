@@ -1,17 +1,22 @@
 package ru.yandex.practicum.telemetry.collector.model;
 
+import jakarta.validation.constraints.NotNull;
+
 public final class ClimateSensorEvent extends SensorEvent {
-    private int temperatureC;
-    private int humidity;
-    private int co2Level;
+    @NotNull
+    private Integer temperatureC;
+    @NotNull
+    private Integer humidity;
+    @NotNull
+    private Integer co2Level;
 
     @Override
     public SensorEventType getType() { return SensorEventType.CLIMATE_SENSOR_EVENT; }
 
-    public int getTemperatureC() { return temperatureC; }
-    public void setTemperatureC(int temperatureC) { this.temperatureC = temperatureC; }
-    public int getHumidity() { return humidity; }
-    public void setHumidity(int humidity) { this.humidity = humidity; }
-    public int getCo2Level() { return co2Level; }
-    public void setCo2Level(int co2Level) { this.co2Level = co2Level; }
+    public Integer getTemperatureC() { return temperatureC; }
+    public void setTemperatureC(Integer temperatureC) { this.temperatureC = temperatureC; }
+    public Integer getHumidity() { return humidity; }
+    public void setHumidity(Integer humidity) { this.humidity = humidity; }
+    public Integer getCo2Level() { return co2Level; }
+    public void setCo2Level(Integer co2Level) { this.co2Level = co2Level; }
 }

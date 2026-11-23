@@ -36,7 +36,7 @@ public class SensorEventMapper {
     }
 
     private SwitchSensorAvro mapSwitch(SwitchSensorEvent event) {
-        return new SwitchSensorAvro(event.isState());
+        return new SwitchSensorAvro(event.getState());
     }
 
     private ClimateSensorAvro mapClimate(ClimateSensorEvent event) {
@@ -44,6 +44,6 @@ public class SensorEventMapper {
     }
 
     private MotionSensorAvro mapMotion(MotionSensorEvent event) {
-        return new MotionSensorAvro(event.getLinkQuality(), event.isMotion(), event.getVoltage());
+        return new MotionSensorAvro(event.getLinkQuality(), event.getMotion(), event.getVoltage());
     }
 }

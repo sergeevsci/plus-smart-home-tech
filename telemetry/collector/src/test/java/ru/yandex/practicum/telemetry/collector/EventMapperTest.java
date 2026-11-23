@@ -52,23 +52,23 @@ class EventMapperTest {
     }
 
     @Test
-    void mapsScenarioCollectionsBooleanAndNullableValues() throws Exception {
+    void mapsScenarioCollectionsIntegerAndNullableValues() throws Exception {
         HubEvent input = json.readValue("""
                 {"hubId":"hub-1","timestamp":"2024-08-06T15:11:24.157Z","type":"SCENARIO_ADDED",
                  "name":"night","conditions":[
-                   {"sensorId":"motion-1","type":"MOTION","operation":"EQUALS","value":true},
+                   {"sensorId":"motion-1","type":"MOTION","operation":"EQUALS","value":1},
                    {"sensorId":"light-1","type":"LUMINOSITY","operation":"LOWER_THAN","value":null}],
                  "actions":[{"sensorId":"switch-1","type":"ACTIVATE","value":null}]}
                 """, HubEvent.class);
 
         HubEventAvro result = new HubEventMapper().map(input);
         ScenarioAddedEventAvro payload = (ScenarioAddedEventAvro) result.getPayload();
-        ScenarioConditionAvro booleanCondition = payload.getConditions().getFirst();
+        ScenarioConditionAvro numericCondition = payload.getConditions().getFirst();
         DeviceActionAvro action = payload.getActions().getFirst();
 
         assertThat(result.getHubId()).isEqualTo("hub-1");
         assertThat(result.getTimestamp()).isEqualTo(Instant.parse("2024-08-06T15:11:24.157Z"));
-        assertThat(booleanCondition.getValue()).isEqualTo(true);
+        assertThat(numericCondition.getValue()).isEqualTo(1);
         assertThat(payload.getConditions().get(1).getValue()).isNull();
         assertThat(action.getValue()).isNull();
     }
