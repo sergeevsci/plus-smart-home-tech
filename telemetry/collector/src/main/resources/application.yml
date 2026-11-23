@@ -1,0 +1,18 @@
+server:
+  port: ${COLLECTOR_HTTP_PORT:8080}
+
+spring:
+  application:
+    name: collector
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: ru.yandex.practicum.kafka.serializer.GeneralAvroSerializer
+      acks: all
+
+collector:
+  kafka:
+    topics:
+      sensors: ${KAFKA_SENSOR_EVENTS_TOPIC:telemetry.sensors.v1}
+      hubs: ${KAFKA_HUB_EVENTS_TOPIC:telemetry.hubs.v1}
