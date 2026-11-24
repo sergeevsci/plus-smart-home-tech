@@ -22,10 +22,18 @@ public class CollectorService {
     }
 
     public CompletableFuture<Void> collectSensor(SensorEvent event) {
-        return publisher.publishSensor(event.getHubId(), sensorMapper.map(event));
+        return publisher.publishSensor(
+                event.getHubId(),
+                event.getTimestamp(),
+                sensorMapper.map(event)
+        );
     }
 
     public CompletableFuture<Void> collectHub(HubEvent event) {
-        return publisher.publishHub(event.getHubId(), hubMapper.map(event));
+        return publisher.publishHub(
+                event.getHubId(),
+                event.getTimestamp(),
+                hubMapper.map(event)
+        );
     }
 }

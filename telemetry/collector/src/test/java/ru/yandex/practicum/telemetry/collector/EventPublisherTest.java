@@ -10,6 +10,7 @@ import ru.yandex.practicum.kafka.telemetry.event.SwitchSensorAvro;
 import ru.yandex.practicum.telemetry.collector.kafka.EventPublisher;
 import ru.yandex.practicum.telemetry.collector.kafka.KafkaPublishException;
 
+import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -29,19 +30,29 @@ class EventPublisherTest {
         Producer<String, SpecificRecordBase> producer = successfulProducer();
         SpecificRecordBase event = new SwitchSensorAvro(true);
         EventPublisher publisher = new EventPublisher(producer, "sensors-topic", "hubs-topic");
+        Instant sensorTimestamp = Instant.parse("2024-08-06T15:11:24Z");
+        Instant hubTimestamp = Instant.parse("2024-08-06T15:12:24Z");
 
-        publisher.publishSensor("hub-1", event).join();
-        publisher.publishHub("hub-2", event).join();
+        publisher.publishSensor("hub-1", sensorTimestamp, event).join();
+        publisher.publishHub("hub-2", hubTimestamp, event).join();
 
         ArgumentCaptor<ProducerRecord<String, SpecificRecordBase>> captor =
                 ArgumentCaptor.forClass(ProducerRecord.class);
         verify(producer, times(2)).send(captor.capture(), any(Callback.class));
 
         assertThat(captor.getAllValues())
-                .extracting(ProducerRecord::topic, ProducerRecord::key)
+                .extracting(ProducerRecord::topic, ProducerRecord::key, ProducerRecord::timestamp)
                 .containsExactly(
-                        org.assertj.core.groups.Tuple.tuple("sensors-topic", "hub-1"),
-                        org.assertj.core.groups.Tuple.tuple("hubs-topic", "hub-2")
+                        org.assertj.core.groups.Tuple.tuple(
+                                "sensors-topic",
+                                "hub-1",
+                                sensorTimestamp.toEpochMilli()
+                        ),
+                        org.assertj.core.groups.Tuple.tuple(
+                                "hubs-topic",
+                                "hub-2",
+                                hubTimestamp.toEpochMilli()
+                        )
                 );
     }
 
@@ -57,7 +68,7 @@ class EventPublisherTest {
         SpecificRecordBase event = new SwitchSensorAvro(true);
         EventPublisher publisher = new EventPublisher(producer, "sensors-topic", "hubs-topic");
 
-        assertThatThrownBy(() -> publisher.publishSensor("hub-1", event).join())
+        assertThatThrownBy(() -> publisher.publishSensor("hub-1", Instant.now(), event).join())
                 .isInstanceOf(CompletionException.class)
                 .hasCauseInstanceOf(KafkaPublishException.class);
     }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -27,17 +28,33 @@ public class EventPublisher {
         this.hubTopic = hubTopic;
     }
 
-    public CompletableFuture<Void> publishSensor(String hubId, SpecificRecordBase event) {
-        return publish(sensorTopic, hubId, event);
+    public CompletableFuture<Void> publishSensor(
+            String hubId,
+            Instant timestamp,
+            SpecificRecordBase event) {
+        return publish(sensorTopic, hubId, timestamp, event);
     }
 
-    public CompletableFuture<Void> publishHub(String hubId, SpecificRecordBase event) {
-        return publish(hubTopic, hubId, event);
+    public CompletableFuture<Void> publishHub(
+            String hubId,
+            Instant timestamp,
+            SpecificRecordBase event) {
+        return publish(hubTopic, hubId, timestamp, event);
     }
 
-    private CompletableFuture<Void> publish(String topic, String key, SpecificRecordBase event) {
+    private CompletableFuture<Void> publish(
+            String topic,
+            String key,
+            Instant timestamp,
+            SpecificRecordBase event) {
         CompletableFuture<Void> result = new CompletableFuture<>();
-        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic, key, event);
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(
+                topic,
+                null,
+                timestamp.toEpochMilli(),
+                key,
+                event
+        );
 
         try {
             producer.send(record, (metadata, exception) -> {
