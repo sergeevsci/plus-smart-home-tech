@@ -41,6 +41,14 @@ class EventControllerTest {
     }
 
     @Test
+    void rejectsUnknownHubScenarioEventType() throws Exception {
+        mockMvc.perform(post("/events/hubs").contentType(MediaType.APPLICATION_JSON).content("""
+                {"hubId":"hub-1","name":"unknown scenario","type":"SCENARIO_UPDATED"}
+                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void rejectsMissingRequiredSensorReading() throws Exception {
         mockMvc.perform(post("/events/sensors").contentType(MediaType.APPLICATION_JSON).content("""
                 {"id":"motion-1","hubId":"hub-1","motion":true,"voltage":220,
