@@ -1,28 +1,28 @@
 package ru.yandex.practicum.telemetry.collector.kafka;
 
 import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 @Component
 public class EventPublisher {
     private static final Logger log = LoggerFactory.getLogger(EventPublisher.class);
 
-    private final KafkaTemplate<String, SpecificRecordBase> kafkaTemplate;
+    private final Producer<String, SpecificRecordBase> producer;
     private final String sensorTopic;
     private final String hubTopic;
 
     public EventPublisher(
-            KafkaTemplate<String, SpecificRecordBase> kafkaTemplate,
+            Producer<String, SpecificRecordBase> producer,
             @Value("${collector.kafka.topics.sensors}") String sensorTopic,
             @Value("${collector.kafka.topics.hubs}") String hubTopic) {
-        this.kafkaTemplate = kafkaTemplate;
+        this.producer = producer;
         this.sensorTopic = sensorTopic;
         this.hubTopic = hubTopic;
     }
@@ -36,14 +36,26 @@ public class EventPublisher {
     }
 
     private CompletableFuture<Void> publish(String topic, String key, SpecificRecordBase event) {
-        return kafkaTemplate.send(topic, key, event)
-                .thenApply(result -> (Void) null)
-                .exceptionally(exception -> {
-                    Throwable cause = exception instanceof CompletionException && exception.getCause() != null
-                            ? exception.getCause() : exception;
-                    log.error("Failed to publish event to Kafka topic {}", topic, cause);
-                    throw new CompletionException(new KafkaPublishException(
-                            "Kafka did not acknowledge the event", cause));
-                });
+        CompletableFuture<Void> result = new CompletableFuture<>();
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic, key, event);
+
+        try {
+            producer.send(record, (metadata, exception) -> {
+                if (exception == null) {
+                    result.complete(null);
+                    return;
+                }
+
+                log.error("Failed to publish event to Kafka topic {}", topic, exception);
+                result.completeExceptionally(new KafkaPublishException(
+                        "Kafka did not acknowledge the event", exception));
+            });
+        } catch (RuntimeException exception) {
+            log.error("Failed to send event to Kafka topic {}", topic, exception);
+            result.completeExceptionally(new KafkaPublishException(
+                    "Kafka did not accept the event", exception));
+        }
+
+        return result;
     }
 }
