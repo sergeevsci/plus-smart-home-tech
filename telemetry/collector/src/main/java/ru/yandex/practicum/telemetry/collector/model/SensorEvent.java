@@ -23,12 +23,24 @@ public abstract class SensorEvent {
     private String hubId;
     private Instant timestamp = Instant.now();
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public String getHubId() { return hubId; }
-    public void setHubId(String hubId) { this.hubId = hubId; }
-    public Instant getTimestamp() { return timestamp; }
-    public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+    public String getHubId() {
+        return hubId;
+    }
+    public void setHubId(String hubId) {
+        this.hubId = hubId;
+    }
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
     @NotNull
     public abstract SensorEventType getType();
 }

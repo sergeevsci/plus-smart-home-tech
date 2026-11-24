@@ -5,10 +5,20 @@ public final class LightSensorEvent extends SensorEvent {
     private int luminosity;
 
     @Override
-    public SensorEventType getType() { return SensorEventType.LIGHT_SENSOR_EVENT; }
+    public SensorEventType getType() {
+        return SensorEventType.LIGHT_SENSOR_EVENT;
+    }
 
-    public int getLinkQuality() { return linkQuality; }
-    public void setLinkQuality(int linkQuality) { this.linkQuality = linkQuality; }
-    public int getLuminosity() { return luminosity; }
-    public void setLuminosity(int luminosity) { this.luminosity = luminosity; }
+    public int getLinkQuality() {
+        return linkQuality;
+    }
+    public void setLinkQuality(int linkQuality) {
+        this.linkQuality = linkQuality;
+    }
+    public int getLuminosity() {
+        return luminosity;
+    }
+    public void setLuminosity(int luminosity) {
+        this.luminosity = luminosity;
+    }
 }

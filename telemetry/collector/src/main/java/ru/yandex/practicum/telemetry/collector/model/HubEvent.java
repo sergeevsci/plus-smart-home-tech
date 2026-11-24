@@ -20,10 +20,18 @@ public abstract class HubEvent {
     private String hubId;
     private Instant timestamp = Instant.now();
 
-    public String getHubId() { return hubId; }
-    public void setHubId(String hubId) { this.hubId = hubId; }
-    public Instant getTimestamp() { return timestamp; }
-    public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
+    public String getHubId() {
+        return hubId;
+    }
+    public void setHubId(String hubId) {
+        this.hubId = hubId;
+    }
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
     @NotNull
     public abstract HubEventType getType();
 }
