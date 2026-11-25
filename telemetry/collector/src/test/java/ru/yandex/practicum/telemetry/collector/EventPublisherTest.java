@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import ru.yandex.practicum.kafka.telemetry.event.SwitchSensorAvro;
 import ru.yandex.practicum.telemetry.collector.kafka.EventPublisher;
+import ru.yandex.practicum.telemetry.collector.kafka.EventTopic;
 import ru.yandex.practicum.telemetry.collector.kafka.KafkaPublishException;
 
 import java.time.Instant;
@@ -33,8 +34,8 @@ class EventPublisherTest {
         Instant sensorTimestamp = Instant.parse("2024-08-06T15:11:24Z");
         Instant hubTimestamp = Instant.parse("2024-08-06T15:12:24Z");
 
-        publisher.publishSensor("hub-1", sensorTimestamp, event).join();
-        publisher.publishHub("hub-2", hubTimestamp, event).join();
+        publisher.publish(EventTopic.SENSOR_EVENTS, "hub-1", sensorTimestamp, event).join();
+        publisher.publish(EventTopic.HUB_EVENTS, "hub-2", hubTimestamp, event).join();
 
         ArgumentCaptor<ProducerRecord<String, SpecificRecordBase>> captor =
                 ArgumentCaptor.forClass(ProducerRecord.class);
@@ -68,7 +69,12 @@ class EventPublisherTest {
         SpecificRecordBase event = new SwitchSensorAvro(true);
         EventPublisher publisher = new EventPublisher(producer, "sensors-topic", "hubs-topic");
 
-        assertThatThrownBy(() -> publisher.publishSensor("hub-1", Instant.now(), event).join())
+        assertThatThrownBy(() -> publisher.publish(
+                EventTopic.SENSOR_EVENTS,
+                "hub-1",
+                Instant.now(),
+                event
+        ).join())
                 .isInstanceOf(CompletionException.class)
                 .hasCauseInstanceOf(KafkaPublishException.class);
     }

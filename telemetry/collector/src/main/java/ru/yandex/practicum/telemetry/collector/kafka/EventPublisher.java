@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -16,43 +18,30 @@ public class EventPublisher {
     private static final Logger log = LoggerFactory.getLogger(EventPublisher.class);
 
     private final Producer<String, SpecificRecordBase> producer;
-    private final String sensorTopic;
-    private final String hubTopic;
+    private final Map<EventTopic, String> topics;
 
     public EventPublisher(
             Producer<String, SpecificRecordBase> producer,
             @Value("${collector.kafka.topics.sensors}") String sensorTopic,
             @Value("${collector.kafka.topics.hubs}") String hubTopic) {
         this.producer = producer;
-        this.sensorTopic = sensorTopic;
-        this.hubTopic = hubTopic;
+        this.topics = new EnumMap<>(EventTopic.class);
+        this.topics.put(EventTopic.SENSOR_EVENTS, sensorTopic);
+        this.topics.put(EventTopic.HUB_EVENTS, hubTopic);
     }
 
-    public CompletableFuture<Void> publishSensor(
+    public CompletableFuture<Void> publish(
+            EventTopic eventTopic,
             String hubId,
             Instant timestamp,
             SpecificRecordBase event) {
-        return publish(sensorTopic, hubId, timestamp, event);
-    }
-
-    public CompletableFuture<Void> publishHub(
-            String hubId,
-            Instant timestamp,
-            SpecificRecordBase event) {
-        return publish(hubTopic, hubId, timestamp, event);
-    }
-
-    private CompletableFuture<Void> publish(
-            String topic,
-            String key,
-            Instant timestamp,
-            SpecificRecordBase event) {
+        String topic = topics.get(eventTopic);
         CompletableFuture<Void> result = new CompletableFuture<>();
         ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(
                 topic,
                 null,
                 timestamp.toEpochMilli(),
-                key,
+                hubId,
                 event
         );
 

@@ -2,6 +2,7 @@ package ru.yandex.practicum.telemetry.collector.service;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.telemetry.collector.kafka.EventPublisher;
+import ru.yandex.practicum.telemetry.collector.kafka.EventTopic;
 import ru.yandex.practicum.telemetry.collector.mapper.HubEventMapper;
 import ru.yandex.practicum.telemetry.collector.mapper.SensorEventMapper;
 import ru.yandex.practicum.telemetry.collector.model.HubEvent;
@@ -22,7 +23,8 @@ public class CollectorService {
     }
 
     public CompletableFuture<Void> collectSensor(SensorEvent event) {
-        return publisher.publishSensor(
+        return publisher.publish(
+                EventTopic.SENSOR_EVENTS,
                 event.getHubId(),
                 event.getTimestamp(),
                 sensorMapper.map(event)
@@ -30,7 +32,8 @@ public class CollectorService {
     }
 
     public CompletableFuture<Void> collectHub(HubEvent event) {
-        return publisher.publishHub(
+        return publisher.publish(
+                EventTopic.HUB_EVENTS,
                 event.getHubId(),
                 event.getTimestamp(),
                 hubMapper.map(event)
